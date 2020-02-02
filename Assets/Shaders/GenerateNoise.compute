@@ -1,0 +1,34 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Result;
+
+Texture2D<float4> GrungeMap;
+Texture2D<float4> DirtMap;
+Texture2D<float4> CellsMap;
+Texture2D<float4> PerlinNoise;
+
+float grungeContrast;
+float grungeContrastPosition;
+
+float noiseContrast;
+float noiseContrastPosition;
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    float grunge = GrungeMap[id.xy].r;
+    float cells = CellsMap[id.xy].r;
+    float dirt = DirtMap[id.xy].r;
+    float noise = PerlinNoise[id.xy].r;
+    
+    grunge = smoothstep(grungeContrastPosition - grungeContrast, grungeContrastPosition + grungeContrast, grunge);
+    noise = smoothstep(noiseContrastPosition - noiseContrast, noiseContrastPosition + noiseContrast, noise);
+    
+    float combined = 1.0 - ((grunge * cells) + dirt);
+    combined = clamp(0.0, 1.0, combined) * noise;
+    
+    Result[id.xy] = float4(combined.x, combined.x, combined.x, 1.0);
+}

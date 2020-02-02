@@ -1,0 +1,49 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Result;
+
+Texture2D<float4> _Brush;
+float brushScale;
+float brushRotation;
+
+float3 drawColor;
+float2 drawPosition;
+
+SamplerState my_linear_clamp_sampler;
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    uint targetWidth, targetHeight;
+    Result.GetDimensions(targetWidth, targetHeight);
+    float2 uv = id.xy / float2(targetWidth, targetHeight);
+    uv.xy -= 0.5;
+    uv.xy *= 2.0;
+    uv.y *= (targetHeight/ targetWidth);
+    
+    uint brushWidth, brushHeight;
+    _Brush.GetDimensions(brushWidth, brushHeight);
+    
+    float2 brushUv = uv - drawPosition;
+    float c = cos(-brushRotation);
+    float s = sin(-brushRotation);
+    float rx = brushUv.x * c - brushUv.y * s;
+    float ry = brushUv.x * s + brushUv.y * c;
+    brushUv = float2(rx, ry);
+    brushUv /= brushScale;
+    brushUv += float2(0.5, 0.5);
+    
+    half4 brush = _Brush.SampleLevel(my_linear_clamp_sampler, brushUv, 0);
+    
+    
+    float dist = brush.a;
+    
+    float3 col = Result[id.xy].rgb;
+    
+    col = lerp(col, drawColor * brush.rgb, dist);
+    
+    Result[id.xy] = float4(col.r, col.g, col.b, Result[id.xy].a + dist);
+}

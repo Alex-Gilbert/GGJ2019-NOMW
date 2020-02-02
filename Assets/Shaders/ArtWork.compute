@@ -1,0 +1,28 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+RWTexture2D<float4> Result;
+
+Texture2D<float4> _ArtWork;
+Texture2D<float4> _Paint;
+Texture2D<float4> _Noise;
+
+SamplerState my_linear_clamp_sampler;
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    uint targetWidth, targetHeight;
+    Result.GetDimensions(targetWidth, targetHeight);
+
+    float2 uv = id.xy / float2(targetWidth, targetHeight);
+    
+    half4 color = _ArtWork.SampleLevel(my_linear_clamp_sampler, uv, 0);
+    color = lerp(color, half4(1.0, 1.0, 1.0, 1.0), _Noise.SampleLevel(my_linear_clamp_sampler, uv, 0));
+    
+    half4 paintLayer = _Paint.SampleLevel(my_linear_clamp_sampler, uv, 0);
+    
+    color = lerp(color, paintLayer, paintLayer.a);
+    
+    Result[id.xy] = color;
+}
