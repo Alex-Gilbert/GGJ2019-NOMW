@@ -158,7 +158,7 @@ MonoBehaviour:
   OriginalArtWork: {fileID: 2800000, guid: 854c074ca94812f40b7737fc739d3558, type: 3}
   scale: 0.01
   brushTexture: {fileID: 2800000, guid: 40de925513c6c6f4584c2d089afde5a9, type: 3}
-  brushScale: 0.2
+  brushScale: 0.1
 --- !u!64 &454972808
 MeshCollider:
   m_ObjectHideFlags: 0
