@@ -74,6 +74,13 @@ public class MoveScript : MonoBehaviour
                 activeArtPiece.ArtWorkShaderDispatcher.CanDraw = true;
                 
                 _audioSource.PlayOneShot(enterPaintingSound[Random.Range(0, enterPaintingSound.Length)]);
+                
+                var audioMaster = GameObject.FindWithTag("AudioMaster");
+                if (audioMaster != null)
+                {
+                    var a = audioMaster.GetComponent<AudioMaster>();
+                    a.FadeInLayerThree();
+                }
             }
         }
         
@@ -97,6 +104,13 @@ public class MoveScript : MonoBehaviour
         activeArtPiece.ArtWorkShaderDispatcher.CanDraw = false;
         
         _audioSource.PlayOneShot(leavePaintingSound);
+        
+        var audioMaster = GameObject.FindWithTag("AudioMaster");
+        if (audioMaster != null)
+        {
+            var a = audioMaster.GetComponent<AudioMaster>();
+            a.FadeOutLayerThree();
+        }
     }
     
     public void EnableArrow(ArtPiece piece)
