@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -10,7 +12,17 @@ public class Countdown : MonoBehaviour
 
     public int minutes;
     public int seconds;
-    
+
+    private AudioSource _audio;
+
+    public AudioClip whistle;
+
+    private void Start()
+    {
+        text.text = seconds < 10 ? $"{minutes}:0{seconds}" : $"{minutes}:{seconds}";
+        _audio = GetComponent<AudioSource>();
+    }
+
     public void StartCountDown()
     {
         text.text = seconds < 10 ? $"{minutes}:0{seconds}" : $"{minutes}:{seconds}";
@@ -40,7 +52,7 @@ public class Countdown : MonoBehaviour
             }
 
             text.text = seconds < 10 ? $"{minutes}:0{seconds}" : $"{minutes}:{seconds}";
-            yield return new WaitForSeconds(1.1f);
+            yield return new WaitForSeconds(1.0f);
         }
         
         var am = GameObject.FindWithTag("AudioMaster");
@@ -49,6 +61,10 @@ public class Countdown : MonoBehaviour
             var a = am.GetComponent<AudioMaster>();
             a.StartGameOver();
         }
+        
+        _audio.PlayOneShot(whistle);
+        
+        yield return new WaitForSeconds(1.5f);
         
         GameObject.FindGameObjectWithTag("MonaLisa").GetComponent<ArtPiece>().Done();
         GameObject.FindGameObjectWithTag("StarryNight").GetComponent<ArtPiece>().Done();
