@@ -115,7 +115,7 @@ public class ArtWorkShaderDispatcher : MonoBehaviour
 
                     tools.canSee = true;
                     tools.SetActiveTool(activeTool);
-                    tools.currentColor = paintColor;
+                    tools.SetActiveColor(paintColor);
                 }
             }
             else
@@ -232,5 +232,10 @@ public class ArtWorkShaderDispatcher : MonoBehaviour
         Shader.SetTexture(shaderKernel, "_Paint", _paintLayer);
         Shader.SetTexture(shaderKernel, "_Noise", _noiseLayer);
         Shader.Dispatch(shaderKernel, OriginalArtWork.width / 8, OriginalArtWork.height / 8, 1);
+    }
+
+    public Texture GetArtwork()
+    {
+        return _artWorkTexture;
     }
 }

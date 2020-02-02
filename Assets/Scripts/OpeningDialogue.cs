@@ -16,6 +16,8 @@ public class OpeningDialogue : MonoBehaviour
 
     public MoveScript playerMoveScript;
 
+    public Countdown Countdown;
+    
     private float playerSpeed;
     
     private void Start()
@@ -55,6 +57,7 @@ public class OpeningDialogue : MonoBehaviour
             a.FadeInLayerTwo();
         }
         
+        Countdown.StartCountDown();
         gameObject.SetActive(false);
     }
 }

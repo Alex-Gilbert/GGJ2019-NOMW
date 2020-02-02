@@ -13,7 +13,7 @@ public class Tools : MonoBehaviour
     public SpriteRenderer pointer;
 
     public ArtTools activeTool = ArtTools.PaintBrush;
-    public Color currentColor = Color.white;
+    private Color currentColor = Color.white;
     public bool canSee = false;
 
     // Update is called once per frame
@@ -60,6 +60,11 @@ public class Tools : MonoBehaviour
         }
     }
 
+    public void SetActiveColor(Color color)
+    {
+        currentColor = color;
+    }
+    
     public void SetActiveTool(ArtTools tool)
     {
         activeTool = tool;

@@ -701,7 +701,6 @@ MonoBehaviour:
   eyeDropFill: {fileID: 329600945}
   pointer: {fileID: 1355669407}
   activeTool: 0
-  currentColor: {r: 1, g: 1, b: 1, a: 1}
   canSee: 0
 --- !u!1 &258151125
 GameObject:
@@ -1289,9 +1288,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingLayerID: -236968501
+  m_SortingLayer: 1
+  m_SortingOrder: 27
   m_Sprite: {fileID: 21300000, guid: 901f13b4e1b381844b071d0fdd0caac3, type: 3}
   m_Color: {r: 0.46226418, g: 0.22022964, b: 0.22022964, a: 1}
   m_FlipX: 0
@@ -2701,12 +2700,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 50
+    m_Font: {fileID: 12800000, guid: 97b602dc437756e4193d634e7957386c, type: 3}
+    m_FontSize: 62
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
-    m_MaxSize: 53
+    m_MinSize: 6
+    m_MaxSize: 71
     m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -4981,6 +4980,7 @@ RectTransform:
   - {fileID: 1422726242}
   - {fileID: 1752197241}
   - {fileID: 276631040}
+  - {fileID: 1998771408}
   m_Father: {fileID: 0}
   m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5294,7 +5294,7 @@ MonoBehaviour:
   text: {fileID: 939307555}
   openingSpeech:
   - Those punks must have snuck in while I was asleep.
-  - Just wait till i get my hand on them!
+  - Just wait 'till I get my hand on them!
   - I'll show them a world of HUUUURTTT!!
   - What the DEVIL?!?
   - They destroyed everything!?
@@ -5302,13 +5302,14 @@ MonoBehaviour:
   - My manager will be in here any minute!
   - I can fix this...
   - I knew this art degree would come in handy at some point...
-  lettersPerSecond: 40
+  lettersPerSecond: 60
   mumbles:
   - {fileID: 8300000, guid: e4182b65d7214a7449a0cb2d75eeca93, type: 3}
   - {fileID: 8300000, guid: a0ba27d669975fa45893b9f181038348, type: 3}
   - {fileID: 8300000, guid: 5edd0294f5815df44a911c8ac298cbb7, type: 3}
   - {fileID: 8300000, guid: 9cba205e87c14104d8e9d10ab7d769a4, type: 3}
   playerMoveScript: {fileID: 1096174933}
+  Countdown: {fileID: 1998771409}
 --- !u!1 &1911180091
 GameObject:
   m_ObjectHideFlags: 0
@@ -5634,6 +5635,99 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1966821511}
   m_CullTransparentMesh: 0
+--- !u!1 &1998771407
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1998771408}
+  - component: {fileID: 1998771411}
+  - component: {fileID: 1998771410}
+  - component: {fileID: 1998771409}
+  m_Layer: 5
+  m_Name: Countdown
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1998771408
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1998771407}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1828506854}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 33.93, y: 16.71}
+  m_SizeDelta: {x: 164, y: 72.7}
+  m_Pivot: {x: 0, y: 0}
+--- !u!114 &1998771409
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1998771407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f9765e4d8db22c4da3a7e7e33a8dbf5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  text: {fileID: 1998771410}
+  minutes: 0
+  seconds: 15
+--- !u!114 &1998771410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1998771407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: 97b602dc437756e4193d634e7957386c, type: 3}
+    m_FontSize: 80
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 87
+    m_Alignment: 0
+    m_AlignByGeometry: 1
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: 3:00
+--- !u!222 &1998771411
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1998771407}
+  m_CullTransparentMesh: 0
 --- !u!1 &2077674072
 GameObject:
   m_ObjectHideFlags: 0
@@ -5885,6 +5979,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: ArtPiece(Jesus)
       objectReference: {fileID: 0}
+    - target: {fileID: 7272137548313000869, guid: ebad4958c68d92247965099782af36a9,
+        type: 3}
+      propertyPath: m_TagString
+      value: Jesus
+      objectReference: {fileID: 0}
     - target: {fileID: 7272137548313000870, guid: ebad4958c68d92247965099782af36a9,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -6053,6 +6152,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: ArtPiece(StarryNight)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3131112516468251334, guid: b71e13aaeceded7419023b0e186fae04,
+        type: 3}
+      propertyPath: m_TagString
+      value: StarryNight
       objectReference: {fileID: 0}
     - target: {fileID: 3131112516468251333, guid: b71e13aaeceded7419023b0e186fae04,
         type: 3}
@@ -6248,6 +6352,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8074858434412866067, guid: 16173eebb70cb784c96cae9f9a87177c,
+        type: 3}
+      propertyPath: m_TagString
+      value: MonaLisa
       objectReference: {fileID: 0}
     - target: {fileID: 8074858434412866064, guid: 16173eebb70cb784c96cae9f9a87177c,
         type: 3}
