@@ -15,6 +15,7 @@ public class MovieController : MonoBehaviour
     void Start()
     {
         _player = GetComponent<VideoPlayer>();
+        Cursor.visible = true;
     }
 
     [ContextMenu("Switch")]

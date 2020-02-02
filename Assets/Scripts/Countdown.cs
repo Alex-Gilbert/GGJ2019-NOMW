@@ -23,6 +23,15 @@ public class Countdown : MonoBehaviour
         _audio = GetComponent<AudioSource>();
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.L) && Input.GetKey(KeyCode.Space))
+        {
+            minutes = 0;
+            seconds = 10;
+        }
+    }
+
     public void StartCountDown()
     {
         text.text = seconds < 10 ? $"{minutes}:0{seconds}" : $"{minutes}:{seconds}";

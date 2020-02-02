@@ -22,6 +22,8 @@ public class OpeningDialogue : MonoBehaviour
     
     private void Start()
     {
+        Cursor.visible = false;
+        
         text.text = "";
         audio = GetComponent<AudioSource>();
         StartCoroutine(Dialogue());

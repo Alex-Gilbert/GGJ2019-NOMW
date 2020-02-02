@@ -17,6 +17,8 @@ public class GameOverCameraController : MonoBehaviour
     
     private void Start()
     {
+        Cursor.visible = true;
+        
         target = Targets[0];
         
         transform.position = target.position;
