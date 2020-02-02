@@ -5686,8 +5686,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: {fileID: 1998771410}
-  minutes: 0
-  seconds: 15
+  minutes: 5
+  seconds: 0
 --- !u!114 &1998771410
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5719,7 +5719,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 3:00
+  m_Text: 5:00
 --- !u!222 &1998771411
 CanvasRenderer:
   m_ObjectHideFlags: 0
