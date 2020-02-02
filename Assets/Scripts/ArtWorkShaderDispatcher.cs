@@ -4,6 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
+
+public enum ArtTools
+{
+    PaintBrush,
+    EyeDrop
+}
 
 public class ArtWorkShaderDispatcher : MonoBehaviour
 {
@@ -19,6 +26,8 @@ public class ArtWorkShaderDispatcher : MonoBehaviour
 
     public Texture2D brushTexture;
     public float brushScale;
+
+    public float brushScaleModifier = 1f;
     
     private RenderTexture _artWorkTexture;
     private RenderTexture _paintLayer;
@@ -26,12 +35,19 @@ public class ArtWorkShaderDispatcher : MonoBehaviour
 
     private Camera _camera;
 
-    private Color _paintColor;
+    public Color paintColor;
 
     private Vector2 _prevMousePosition;
     private float _prevRotation;
 
-    public SpriteRenderer frame;
+    public bool CanDraw = false;
+
+    public ArtTools activeTool = ArtTools.PaintBrush;
+
+    private AudioSource AudioSource;
+    public AudioClip[] ScrapeAudioClips;
+    public AudioClip EyeDropSound;
+    public AudioClip[] RandomGuardNoisesWhilePainting;
     
     // Start is called before the first frame update
     void Start()
@@ -70,7 +86,9 @@ public class ArtWorkShaderDispatcher : MonoBehaviour
         paintShaderKernel = PaintShader.FindKernel("CSMain");
         
         
-        _paintColor = Color.white;
+        paintColor = Color.white;
+
+        AudioSource = GetComponent<AudioSource>();
     }
 
     [ContextMenu("CorrectSize")]
@@ -81,119 +99,134 @@ public class ArtWorkShaderDispatcher : MonoBehaviour
     
     // Update is called once per frame
     void Update()
-    { 
-        if(Input.GetKeyDown(KeyCode.Alpha1))
-            _paintColor = Color.red;
-        
-        if(Input.GetKeyDown(KeyCode.Alpha2))
-            _paintColor = Color.green;
-        
-        if(Input.GetKeyDown(KeyCode.Alpha3))
-            _paintColor = Color.blue;
-        
-        if(Input.GetKeyDown(KeyCode.Alpha4))
-            _paintColor = Color.white;
-        
-        if(Input.GetKeyDown(KeyCode.Alpha5))
-            _paintColor = Color.black;
-        
-        if (Input.GetMouseButton(0))
+    {
+        if (CanDraw)
         {
             RaycastHit hit;
             Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
 
-            if (Physics.Raycast(ray, out hit))
+            bool didHit = Physics.Raycast(ray, out hit);
+            
+            if (didHit)
             {
                 if (hit.transform == transform)
                 {
-                    var point = hit.point;
-                    point.z = 0;
+                    var tools = GameObject.FindWithTag("Tools").GetComponent<Tools>();
 
-                    var center = transform.position;
-                    center.z = 0;
+                    tools.canSee = true;
+                    tools.SetActiveTool(activeTool);
+                    tools.currentColor = paintColor;
+                }
+            }
+            else
+            {
+                var tools = GameObject.FindWithTag("Tools").GetComponent<Tools>();
+                tools.canSee = false;
+            }
 
-                    var right = transform.right * 2.0f;
-                    var up = transform.up * 2.0f;
-
-                    var x = Vector3.Dot(right, point - center) / transform.localScale.x;
-                    var y = Vector3.Dot(up, point - center) / transform.localScale.x;
-
-                    
-                    float rot;
-                    
-                    Debug.Log(Vector2.Distance(_prevMousePosition, Input.mousePosition) > 1f);
-                    
-                    if (Vector2.Distance(_prevMousePosition, Input.mousePosition) > 1f)
+            if (Input.GetMouseButton(0) && activeTool == ArtTools.PaintBrush)
+            {
+                if (didHit)
+                {
+                    if (hit.transform == transform)
                     {
-                        rot = Mathf.Atan2(Input.mousePosition.y - _prevMousePosition.y,
-                            Input.mousePosition.x - _prevMousePosition.x);
-                    }
-                    else
-                    {
-                        rot = _prevRotation;
-                    }
-                    
-                    Debug.Log(rot);
-                    
-                    PaintShader.SetTexture(paintShaderKernel, "Result", _paintLayer);
-                    PaintShader.SetFloats("drawColor", _paintColor.r, _paintColor.g, _paintColor.b);
-                    PaintShader.SetFloats("drawPosition", x, y);
-                    PaintShader.SetFloat("brushScale", brushScale);
-                    PaintShader.SetFloat("brushRotation", rot);
-                    PaintShader.SetTexture(paintShaderKernel, "_Brush", brushTexture);
-                    PaintShader.Dispatch(paintShaderKernel, OriginalArtWork.width / 8, OriginalArtWork.height / 8, 1);
+                        if (Random.Range(0f, 1f) < 0.0025f)
+                        {
+                            var audioSource = GameObject.FindWithTag("Player").GetComponent<AudioSource>();
+                            
+                            audioSource.PlayOneShot(RandomGuardNoisesWhilePainting[Random.Range(0, RandomGuardNoisesWhilePainting.Length)]);
+                        }
+                        
+                        var point = hit.point;
+                        point.z = 0;
 
-                    _prevMousePosition = Input.mousePosition;
-                    _prevRotation = rot;
-                    
-                    
+                        var center = transform.position;
+                        center.z = 0;
+
+                        var right = transform.right * 2.0f;
+                        var up = transform.up * 2.0f;
+
+                        var x = Vector3.Dot(right, point - center) / transform.localScale.x;
+                        var y = Vector3.Dot(up, point - center) / transform.localScale.x;
+
+                        float rot;
+
+                        Debug.Log(Vector2.Distance(_prevMousePosition, Input.mousePosition) > 1f);
+
+                        if (Vector2.Distance(_prevMousePosition, Input.mousePosition) > 1f)
+                        {
+                            rot = Mathf.Atan2(Input.mousePosition.y - _prevMousePosition.y,
+                                Input.mousePosition.x - _prevMousePosition.x);
+                            
+                            if(!AudioSource.isPlaying)
+                                AudioSource.PlayOneShot(ScrapeAudioClips[Random.Range(0, ScrapeAudioClips.Length)]);
+                        }
+                        else
+                        {
+                            rot = _prevRotation;
+                        }
+
+                        Debug.Log(rot);
+
+                        PaintShader.SetTexture(paintShaderKernel, "Result", _paintLayer);
+                        PaintShader.SetFloats("drawColor", paintColor.r, paintColor.g, paintColor.b);
+                        PaintShader.SetFloats("drawPosition", x, y);
+                        PaintShader.SetFloat("brushScale", brushScale * brushScaleModifier);
+                        PaintShader.SetFloat("brushRotation", rot);
+                        PaintShader.SetTexture(paintShaderKernel, "_Brush", brushTexture);
+                        PaintShader.Dispatch(paintShaderKernel, OriginalArtWork.width / 8, OriginalArtWork.height / 8,
+                            1);
+
+                        _prevMousePosition = Input.mousePosition;
+                        _prevRotation = rot;
+                    }
+                }
+            }
+
+            if (Input.GetMouseButtonDown(1) || (Input.GetMouseButtonDown(0) && activeTool == ArtTools.EyeDrop))
+            {
+                if (didHit)
+                {
+                    if (hit.transform == transform)
+                    {
+                        var point = hit.point;
+                        point.z = 0;
+
+                        var center = transform.position;
+                        center.z = 0;
+
+                        var right = transform.right * 2.0f;
+                        var up = transform.up * 2.0f;
+
+                        var x = Vector3.Dot(right, point - center) / transform.localScale.x;
+                        var y = Vector3.Dot(up, point - center) / transform.localScale.x;
+
+                        y /= (float) OriginalArtWork.height / OriginalArtWork.width;
+                        y /= 2.0f;
+                        x /= 2.0f;
+                        x += 0.5f;
+                        y += 0.5f;
+                        x *= OriginalArtWork.width;
+                        y *= OriginalArtWork.height;
+
+                        var texture = new Texture2D(OriginalArtWork.width, OriginalArtWork.height);
+
+                        RenderTexture.active = _artWorkTexture;
+                        texture.ReadPixels(new Rect(0, 0, OriginalArtWork.width, OriginalArtWork.height), 0, 0);
+                        texture.Apply();
+                        RenderTexture.active = null;
+
+                        paintColor = texture.GetPixel((int) x, (int) y);
+
+                        Destroy(texture);
+                        
+                        if(!AudioSource.isPlaying)
+                            AudioSource.PlayOneShot(EyeDropSound);
+                    }
                 }
             }
         }
 
-        if (Input.GetMouseButton(1))
-        {
-            RaycastHit hit;
-            Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
-
-            if (Physics.Raycast(ray, out hit))
-            {
-                if (hit.transform == transform)
-                {
-                    var point = hit.point;
-                    point.z = 0;
-
-                    var center = transform.position;
-                    center.z = 0;
-
-                    var right = transform.right * 2.0f;
-                    var up = transform.up * 2.0f;
-
-                    var x = Vector3.Dot(right, point - center) / transform.localScale.x;
-                    var y = Vector3.Dot(up, point - center) / transform.localScale.x;
-
-                    y /= (float)OriginalArtWork.height / OriginalArtWork.width;
-                    y /= 2.0f;
-                    x /= 2.0f;
-                    x += 0.5f;
-                    y += 0.5f;
-                    x *= OriginalArtWork.width;
-                    y *= OriginalArtWork.height;
-                    
-                    var texture = new Texture2D(OriginalArtWork.width, OriginalArtWork.height);
-                    
-                    RenderTexture.active = _artWorkTexture;
-                    texture.ReadPixels (new Rect (0, 0, OriginalArtWork.width, OriginalArtWork.height), 0, 0);
-                    texture.Apply ();
-                    RenderTexture.active = null;
-
-                    _paintColor = texture.GetPixel((int) x, (int) y);
-                    
-                    Destroy(texture);
-                }
-            }
-        }
-        
         Shader.SetTexture(shaderKernel, "Result", _artWorkTexture);
         Shader.SetTexture(shaderKernel, "_ArtWork", OriginalArtWork);
         Shader.SetTexture(shaderKernel, "_Paint", _paintLayer);
