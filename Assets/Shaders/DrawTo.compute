@@ -22,7 +22,7 @@ void CSMain (uint3 id : SV_DispatchThreadID)
     float2 uv = id.xy / float2(targetWidth, targetHeight);
     uv.xy -= 0.5;
     uv.xy *= 2.0;
-    uv.y *= (targetHeight/ targetWidth);
+    uv.y *= ((float)targetHeight/ (float)targetWidth);
     
     uint brushWidth, brushHeight;
     _Brush.GetDimensions(brushWidth, brushHeight);
@@ -46,4 +46,5 @@ void CSMain (uint3 id : SV_DispatchThreadID)
     col = lerp(col, drawColor * brush.rgb, dist);
     
     Result[id.xy] = float4(col.r, col.g, col.b, Result[id.xy].a + dist);
+    //Result[id.xy] = float4(uv.x, uv.y, 0.0, 1.0);
 }

@@ -30,6 +30,8 @@ public class ArtWorkShaderDispatcher : MonoBehaviour
 
     private Vector2 _prevMousePosition;
     private float _prevRotation;
+
+    public SpriteRenderer frame;
     
     // Start is called before the first frame update
     void Start()
@@ -63,19 +65,23 @@ public class ArtWorkShaderDispatcher : MonoBehaviour
         Shader.SetTexture(shaderKernel, "_Paint", _paintLayer);
         Shader.SetTexture(shaderKernel, "_Noise", _noiseLayer);
         
-        transform.localScale = new Vector3(OriginalArtWork.width * scale,OriginalArtWork.height * scale, 1f);
         GetComponent<MeshRenderer>().material.SetTexture("_MainTex", _artWorkTexture);
 
         paintShaderKernel = PaintShader.FindKernel("CSMain");
-        PaintShader.SetTexture(paintShaderKernel, "Result", _paintLayer);
         
         
         _paintColor = Color.white;
     }
 
+    [ContextMenu("CorrectSize")]
+    void correctSize()
+    {
+        transform.localScale = new Vector3(OriginalArtWork.width * scale,OriginalArtWork.height * scale, 1f);
+    }
+    
     // Update is called once per frame
     void Update()
-    {
+    { 
         if(Input.GetKeyDown(KeyCode.Alpha1))
             _paintColor = Color.red;
         
@@ -129,6 +135,7 @@ public class ArtWorkShaderDispatcher : MonoBehaviour
                     
                     Debug.Log(rot);
                     
+                    PaintShader.SetTexture(paintShaderKernel, "Result", _paintLayer);
                     PaintShader.SetFloats("drawColor", _paintColor.r, _paintColor.g, _paintColor.b);
                     PaintShader.SetFloats("drawPosition", x, y);
                     PaintShader.SetFloat("brushScale", brushScale);
@@ -165,7 +172,7 @@ public class ArtWorkShaderDispatcher : MonoBehaviour
                     var x = Vector3.Dot(right, point - center) / transform.localScale.x;
                     var y = Vector3.Dot(up, point - center) / transform.localScale.x;
 
-                    y /= OriginalArtWork.height / OriginalArtWork.width;
+                    y /= (float)OriginalArtWork.height / OriginalArtWork.width;
                     y /= 2.0f;
                     x /= 2.0f;
                     x += 0.5f;
@@ -186,7 +193,11 @@ public class ArtWorkShaderDispatcher : MonoBehaviour
                 }
             }
         }
-
+        
+        Shader.SetTexture(shaderKernel, "Result", _artWorkTexture);
+        Shader.SetTexture(shaderKernel, "_ArtWork", OriginalArtWork);
+        Shader.SetTexture(shaderKernel, "_Paint", _paintLayer);
+        Shader.SetTexture(shaderKernel, "_Noise", _noiseLayer);
         Shader.Dispatch(shaderKernel, OriginalArtWork.width / 8, OriginalArtWork.height / 8, 1);
     }
 }
