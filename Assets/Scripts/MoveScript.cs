@@ -31,6 +31,13 @@ public class MoveScript : MonoBehaviour
         _globalAnim = GetComponent<Animator>();
 
         _audioSource = GetComponent<AudioSource>();
+        
+        // var audioMaster = GameObject.FindWithTag("AudioMaster");
+        // if (audioMaster != null)
+        // {
+        //     var a = audioMaster.GetComponent<AudioMaster>();
+        //     a.volume = 0.4f;
+        // }
     }
 
     // Update is called once per frame

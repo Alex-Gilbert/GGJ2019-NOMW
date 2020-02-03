@@ -9,12 +9,24 @@ public class AudioMaster : MonoBehaviour
     public AudioSource GameOver;
 
     private Animator animator;
+
+    public AudioSource[] allSources;
+    public float volume;
     
     private void Awake()
     {
         DontDestroyOnLoad(this);
 
         animator = GetComponent<Animator>();
+    }
+
+    private void LateUpdate()
+    {
+        for (var i = 0; i < allSources.Length; i++)
+        {
+            var s = allSources[i];
+            s.volume *= volume;
+        }
     }
 
     public void FadeInLayerTwo()
